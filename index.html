@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- PWA Meta Tags -->
+    <title>Calculadora SOFA & AKIN</title>
+    <meta name="theme-color" content="#3B82F6"/>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/icon-192x192.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        .input-group input[type="number"], .input-group select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.375rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-group input[type="number"]:focus, .input-group select:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 2px #BFDBFE;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        .checkbox-group input {
+            margin-right: 0.5rem;
+        }
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1F2937;
+            border-bottom: 1px solid #E5E7EB;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-primary {
+            background-color: #3B82F6;
+        }
+        .btn-primary:hover {
+            background-color: #2563EB;
+        }
+        .btn-secondary {
+            background-color: #6B7280;
+        }
+        .btn-secondary:hover {
+            background-color: #4B5563;
+        }
+        #results {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            background-color: #F3F4F6;
+            text-align: center;
+        }
+        .result-item {
+            margin-bottom: 1rem;
+        }
+        .result-item h3 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #4B5563;
+        }
+        .result-item p {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 p-4 sm:p-6 lg:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-slate-800">Calculadora de Scores Clínicos</h1>
+            <p class="text-slate-600 mt-2">Insira os dados do paciente para calcular os scores SOFA e AKIN.</p>
+        </header>
+
+        <form id="scores-form">
+            <!-- SOFA Score Section -->
+            <div class="card">
+                <h2>Score SOFA (Avaliação Sequencial de Falência Orgânica)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                    <!-- Respiratório -->
+                    <div class="input-group">
+                        <label>Função Respiratória</label>
+                        <input type="number" id="pao2" placeholder="PaO₂ (mmHg)" class="mb-2">
+                        <input type="number" id="fio2" placeholder="FiO₂ (%)" class="mb-2">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="vent_mec">
+                            <label for="vent_mec">Paciente em ventilação mecânica?</label>
+                        </div>
+                    </div>
+                    <!-- Coagulação -->
+                    <div class="input-group">
+                        <label for="plaquetas">Função de Coagulação</label>
+                        <input type="number" id="plaquetas" placeholder="Plaquetas (x10³/mm³)">
+                    </div>
+                    <!-- Hepático -->
+                    <div class="input-group">
+                        <label for="bilirrubina">Função Hepática</label>
+                        <input type="number" id="bilirrubina" placeholder="Bilirrubina Total (mg/dL)">
+                    </div>
+                    <!-- Cardiovascular -->
+                    <div class="input-group">
+                        <label>Função Cardiovascular</label>
+                        <input type="number" id="pam" placeholder="PAM (mmHg)" class="mb-2">
+                        <select id="vasopressores" class="mt-2">
+                            <option value="0">Sem vasopressores</option>
+                            <option value="2">Dopamina > 5 ou Dobutamina (qualquer dose)</option>
+                            <option value="3">Epinefrina ≤ 0.1 ou Norepinefrina ≤ 0.1</option>
+                            <option value="4">Epinefrina > 0.1 ou Norepinefrina > 0.1</option>
+                        </select>
+                    </div>
+                    <!-- Neurológico -->
+                    <div class="input-group">
+                        <label for="glasgow">Função Neurológica</label>
+                        <input type="number" id="glasgow" min="3" max="15" placeholder="Escala de Coma de Glasgow">
+                    </div>
+                    <!-- Renal -->
+                    <div class="input-group">
+                        <label>Função Renal (para SOFA)</label>
+                        <input type="number" id="creatinina_sofa" placeholder="Creatinina Sérica (mg/dL)" class="mb-2">
+                        <input type="number" id="debito_urinario_24h" placeholder="Débito Urinário em 24h (mL)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- AKIN Score Section -->
+            <div class="card">
+                <h2>Score AKIN (Classificação de Lesão Renal Aguda)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                    <div class="input-group">
+                        <label for="peso">Peso do Paciente (kg)</label>
+                        <input type="number" id="peso" placeholder="Ex: 70">
+                    </div>
+                    <div class="input-group">
+                        <label for="creatinina_basal">Creatinina Sérica Basal (mg/dL)</label>
+                        <input type="number" id="creatinina_basal" placeholder="Valor de referência">
+                    </div>
+                    <div class="input-group">
+                        <label for="creatinina_atual">Creatinina Sérica Atual (mg/dL)</label>
+                        <input type="number" id="creatinina_atual" placeholder="Valor medido hoje">
+                    </div>
+                    <div class="input-group">
+                        <label for="debito_urinario_total">Débito Urinário Total (mL)</label>
+                        <input type="number" id="debito_urinario_total" placeholder="Volume total coletado">
+                    </div>
+                    <div class="input-group">
+                        <label for="periodo_afericao">Período de Aferição (horas)</label>
+                        <input type="number" id="periodo_afericao" placeholder="Ex: 6, 12 ou 24">
+                    </div>
+                     <div class="input-group flex items-center mt-6">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="trs">
+                            <label for="trs">Paciente iniciou Terapia Renal Substitutiva (TRS)?</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-center space-x-4">
+                <button type="button" id="calculate-btn" class="btn btn-primary">Calcular Scores</button>
+                <button type="reset" class="btn btn-secondary">Limpar Campos</button>
+            </div>
+        </form>
+
+        <div id="results" class="hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="result-item" id="sofa-result-container">
+                    <h3>Score SOFA Total</h3>
+                    <p id="sofa-result" class="text-blue-600">0</p>
+                </div>
+                <div class="result-item" id="akin-result-container">
+                    <h3>Estágio AKIN</h3>
+                    <p id="akin-result" class="text-blue-600">N/A</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- PWA Service Worker Registration ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado com sucesso:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Falha ao registrar o Service Worker:', error);
+                    });
+            });
+        }
+
+        // --- Calculation Logic ---
+        document.getElementById('calculate-btn').addEventListener('click', () => {
+            // SOFA Calculation
+            let sofaScore = 0;
+            const pao2 = parseFloat(document.getElementById('pao2').value);
+            const fio2 = parseFloat(document.getElementById('fio2').value);
+            const ventMec = document.getElementById('vent_mec').checked;
+            if (pao2 && fio2) {
+                const pao2_fio2_ratio = pao2 / (fio2 / 100);
+                if (pao2_fio2_ratio < 100 && ventMec) sofaScore += 4;
+                else if (pao2_fio2_ratio < 200 && ventMec) sofaScore += 3;
+                else if (pao2_fio2_ratio < 300) sofaScore += 2;
+                else if (pao2_fio2_ratio < 400) sofaScore += 1;
+            }
+            const plaquetas = parseFloat(document.getElementById('plaquetas').value);
+            if (!isNaN(plaquetas)) {
+                if (plaquetas < 20) sofaScore += 4;
+                else if (plaquetas < 50) sofaScore += 3;
+                else if (plaquetas < 100) sofaScore += 2;
+                else if (plaquetas < 150) sofaScore += 1;
+            }
+            const bilirrubina = parseFloat(document.getElementById('bilirrubina').value);
+            if (!isNaN(bilirrubina)) {
+                if (bilirrubina >= 12.0) sofaScore += 4;
+                else if (bilirrubina >= 6.0) sofaScore += 3;
+                else if (bilirrubina >= 2.0) sofaScore += 2;
+                else if (bilirrubina >= 1.2) sofaScore += 1;
+            }
+            const pam = parseFloat(document.getElementById('pam').value);
+            const vasopressores = parseInt(document.getElementById('vasopressores').value);
+            if (vasopressores > 0) {
+                sofaScore += vasopressores;
+            } else if (!isNaN(pam) && pam < 70) {
+                sofaScore += 1;
+            }
+            const glasgow = parseInt(document.getElementById('glasgow').value);
+            if (!isNaN(glasgow)) {
+                if (glasgow < 6) sofaScore += 4;
+                else if (glasgow <= 9) sofaScore += 3;
+                else if (glasgow <= 12) sofaScore += 2;
+                else if (glasgow <= 14) sofaScore += 1;
+            }
+            const creatininaSofa = parseFloat(document.getElementById('creatinina_sofa').value);
+            const debitoUrinario24h = parseFloat(document.getElementById('debito_urinario_24h').value);
+            let renalScore = 0;
+            if (!isNaN(creatininaSofa)) {
+                if (creatininaSofa >= 5.0) renalScore = 4;
+                else if (creatininaSofa >= 3.5) renalScore = 3;
+                else if (creatininaSofa >= 2.0) renalScore = 2;
+                else if (creatininaSofa >= 1.2) renalScore = 1;
+            }
+            if (!isNaN(debitoUrinario24h)) {
+                if (debitoUrinario24h < 200 && renalScore < 4) renalScore = 4;
+                else if (debitoUrinario24h < 500 && renalScore < 3) renalScore = 3;
+            }
+            sofaScore += renalScore;
+
+            // AKIN Calculation
+            let akinStage = 0;
+            const peso = parseFloat(document.getElementById('peso').value);
+            const creatininaBasal = parseFloat(document.getElementById('creatinina_basal').value);
+            const creatininaAtual = parseFloat(document.getElementById('creatinina_atual').value);
+            const debitoUrinarioTotal = parseFloat(document.getElementById('debito_urinario_total').value);
+            const periodoAfericao = parseFloat(document.getElementById('periodo_afericao').value);
+            const trs = document.getElementById('trs').checked;
+            let akinCreatinina = 0;
+            let akinDebito = 0;
+            if (trs) {
+                akinCreatinina = 3;
+            } else if (!isNaN(creatininaBasal) && !isNaN(creatininaAtual)) {
+                const aumentoAbsoluto = creatininaAtual - creatininaBasal;
+                const aumentoRelativo = creatininaAtual / creatininaBasal;
+                if (creatininaAtual >= 4.0 && aumentoAbsoluto >= 0.5) akinCreatinina = 3;
+                else if (aumentoRelativo >= 3.0) akinCreatinina = 3;
+                else if (aumentoRelativo >= 2.0) akinCreatinina = 2;
+                else if (aumentoRelativo >= 1.5 || aumentoAbsoluto >= 0.3) akinCreatinina = 1;
+            }
+            if (!isNaN(peso) && !isNaN(debitoUrinarioTotal) && !isNaN(periodoAfericao) && peso > 0 && periodoAfericao > 0) {
+                const debitoNormalizado = debitoUrinarioTotal / peso / periodoAfericao;
+                if (debitoNormalizado < 0.3 && periodoAfericao >= 24) akinDebito = 3;
+                else if (debitoUrinarioTotal === 0 && periodoAfericao >= 12) akinDebito = 3;
+                else if (debitoNormalizado < 0.5 && periodoAfericao >= 12) akinDebito = 2;
+                else if (debitoNormalizado < 0.5 && periodoAfericao >= 6) akinDebito = 1;
+            }
+            akinStage = Math.max(akinCreatinina, akinDebito);
+
+            // Display Results
+            document.getElementById('results').classList.remove('hidden');
+            const sofaResultEl = document.getElementById('sofa-result');
+            sofaResultEl.textContent = sofaScore;
+            sofaResultEl.style.color = sofaScore > 8 ? '#DC2626' : (sofaScore > 4 ? '#F59E0B' : '#3B82F6');
+            const akinResultEl = document.getElementById('akin-result');
+            if (akinStage > 0) {
+                akinResultEl.textContent = `Estágio ${akinStage}`;
+            } else {
+                akinResultEl.textContent = "Sem LRA";
+            }
+            akinResultEl.style.color = akinStage === 3 ? '#DC2626' : (akinStage > 1 ? '#F59E0B' : '#3B82F6');
+        });
+
+        document.getElementById('scores-form').addEventListener('reset', () => {
+             document.getElementById('results').classList.add('hidden');
+             document.getElementById('sofa-result').textContent = '0';
+             document.getElementById('akin-result').textContent = 'N/A';
+             document.getElementById('sofa-result').style.color = '#3B82F6';
+             document.getElementById('akin-result').style.color = '#3B82F6';
+        });
+    </script>
+</body>
+</html>
