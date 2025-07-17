@@ -123,7 +123,7 @@
             <p class="text-slate-600 mt-2">Insira os dados do paciente para calcular os scores SOFA e AKIN.</p>
         </header>
 
-        <form id="scores-form">
+        <div id="calculator-inputs">
             <!-- SOFA Score Section -->
             <div class="card">
                 <h2>Score SOFA (Avaliação Sequencial de Falência Orgânica)</h2>
@@ -205,23 +205,23 @@
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
 
-        <!-- Results Section - MOVED HERE -->
-        <div id="results" class="hidden">
+        <!-- Results Section -->
+        <div id="results">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="result-item" id="sofa-result-container">
                     <h3>Score SOFA Total</h3>
-                    <p id="sofa-result" class="text-blue-600">0</p>
+                    <p id="sofa-result" class="text-blue-600 hidden">0</p>
                 </div>
                 <div class="result-item" id="akin-result-container">
                     <h3>Estágio AKIN</h3>
-                    <p id="akin-result" class="text-blue-600">N/A</p>
+                    <p id="akin-result" class="text-blue-600 hidden">N/A</p>
                 </div>
             </div>
         </div>
 
-        <!-- Buttons Section - MOVED HERE -->
+        <!-- Buttons Section -->
         <div class="flex justify-center space-x-4 mt-6">
             <button type="button" id="calculate-btn" class="btn btn-primary">Calcular Scores</button>
             <button type="button" id="reset-btn" class="btn btn-secondary">Limpar Campos</button>
@@ -326,27 +326,36 @@
             akinStage = Math.max(akinCreatinina, akinDebito);
 
             // Display Results
-            document.getElementById('results').classList.remove('hidden');
             const sofaResultEl = document.getElementById('sofa-result');
             sofaResultEl.textContent = sofaScore;
+            sofaResultEl.classList.remove('hidden');
             sofaResultEl.style.color = sofaScore > 8 ? '#DC2626' : (sofaScore > 4 ? '#F59E0B' : '#3B82F6');
+            
             const akinResultEl = document.getElementById('akin-result');
             if (akinStage > 0) {
                 akinResultEl.textContent = `Estágio ${akinStage}`;
             } else {
                 akinResultEl.textContent = "Sem LRA";
             }
+            akinResultEl.classList.remove('hidden');
             akinResultEl.style.color = akinStage === 3 ? '#DC2626' : (akinStage > 1 ? '#F59E0B' : '#3B82F6');
         });
 
         // --- Reset Button Logic ---
         document.getElementById('reset-btn').addEventListener('click', () => {
-             document.getElementById('scores-form').reset();
-             document.getElementById('results').classList.add('hidden');
-             document.getElementById('sofa-result').textContent = '0';
-             document.getElementById('akin-result').textContent = 'N/A';
-             document.getElementById('sofa-result').style.color = '#3B82F6';
-             document.getElementById('akin-result').style.color = '#3B82F6';
+             const inputs = document.querySelectorAll('#calculator-inputs input, #calculator-inputs select');
+             inputs.forEach(input => {
+                if (input.type === 'checkbox') {
+                    input.checked = false;
+                } else if (input.tagName === 'SELECT') {
+                    input.selectedIndex = 0;
+                } else {
+                    input.value = '';
+                }
+             });
+
+             document.getElementById('sofa-result').classList.add('hidden');
+             document.getElementById('akin-result').classList.add('hidden');
         });
     </script>
 </body>
