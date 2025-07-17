@@ -7,112 +7,34 @@
     <!-- PWA Meta Tags -->
     <title>Calculadora SOFA & AKIN</title>
     <meta name="theme-color" content="#3B82F6"/>
+    <!-- Link para o ficheiro manifest.json externo -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="images/icon-192x192.png">
 
     <style>
-        /* --- Google Fonts Import --- */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
+        /* --- Google Fonts (Inter) Embutido --- */
+        /* latin-ext */
+        @font-face {
+          font-family: 'Inter';
+          font-style: normal;
+          font-weight: 400;
+          font-display: swap;
+          src: url(https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuU_oUjb-csVQ.woff2) format('woff2');
+          unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+        }
+        /* latin */
+        @font-face {
+          font-family: 'Inter';
+          font-style: normal;
+          font-weight: 400;
+          font-display: swap;
+          src: url(https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuU_oUjb-enA.woff2) format('woff2');
+          unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
         /* --- Tailwind CSS v3.4.1 --- */
-        /*
-        ! tailwindcss v3.4.1 | MIT License | https://tailwindcss.com
-        */
-        *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::before,::after{--tw-content:''}html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, sans-serif;font-feature-settings:normal}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,[type='button'],[type='reset'],[type='submit']{-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type='search']{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role="button"]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]{display:none}.p-4{padding:1rem}.p-8{padding:2rem}.p-6{padding:1.5rem}.text-center{text-align:center}.mb-8{margin-bottom:2rem}.mb-2{margin-bottom:.5rem}.mt-2{margin-top:.5rem}.mt-6{margin-top:1.5rem}.mb-1{margin-bottom:.25rem}.mb-4{margin-bottom:1rem}.mt-4{margin-top:1rem}.grid{display:grid}.hidden{display:none}.h-screen{height:100vh}.w-full{width:100%}.max-w-4xl{max-width:56rem}.flex{display:flex}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.items-center{align-items:center}.justify-center{justify-content:center}.gap-4{gap:1rem}.space-x-4>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.rounded-lg{border-radius:.5rem}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity))}.p-2{padding:.5rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.font-bold{font-weight:700}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity))}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}@media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:gap-x-6{column-gap:1.5rem}}@media (min-width:1024px){.lg\:p-8{padding:2rem}}
-
+        *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::before,::after{--tw-content:''}html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, sans-serif;font-feature-settings:normal}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,[type='button'],[type='reset'],[type='submit']{-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type='search']{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role="button"]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]{display:none}.p-4{padding:1rem}.p-6{padding:1.5rem}.text-center{text-align:center}.mb-8{margin-bottom:2rem}.mb-2{margin-bottom:.5rem}.mt-2{margin-top:.5rem}.mt-6{margin-top:1.5rem}.mb-4{margin-bottom:1rem}.grid{display:grid}.hidden{display:none}.w-full{width:100%}.max-w-4xl{max-width:56rem}.flex{display:flex}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.items-center{align-items:center}.justify-center{justify-content:center}.gap-4{gap:1rem}.space-x-4>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity))}.text-3xl{font-size:1.875rem;line-height:2.25rem}.font-bold{font-weight:700}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity))}@media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:gap-x-6{column-gap:1.5rem}}@media (min-width:1024px){.lg\:p-8{padding:2rem}}
         /* --- Custom Styles --- */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .input-group {
-            margin-bottom: 1rem;
-        }
-        .input-group label {
-            display: block;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-        .input-group input[type="number"], .input-group select {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #D1D5DB;
-            border-radius: 0.375rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .input-group input[type="number"]:focus, .input-group select:focus {
-            outline: none;
-            border-color: #3B82F6;
-            box-shadow: 0 0 0 2px #BFDBFE;
-        }
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-top: 0.5rem;
-        }
-        .checkbox-group input {
-            margin-right: 0.5rem;
-            height: 1rem;
-            width: 1rem;
-        }
-        h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1F2937;
-            border-bottom: 1px solid #E5E7EB;
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.375rem;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            border: none;
-        }
-        .btn-primary {
-            background-color: #3B82F6;
-        }
-        .btn-primary:hover {
-            background-color: #2563EB;
-        }
-        .btn-secondary {
-            background-color: #6B7280;
-        }
-        .btn-secondary:hover {
-            background-color: #4B5563;
-        }
-        #results {
-            margin-top: 1.5rem;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            background-color: #F3F4F6;
-            text-align: center;
-        }
-        .result-item {
-            margin-bottom: 1rem;
-        }
-        .result-item:last-child {
-            margin-bottom: 0;
-        }
-        .result-item h3 {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: #4B5563;
-        }
-        .result-item p {
-            font-size: 2rem;
-            font-weight: 700;
-        }
+        .card{background-color:#fff;border-radius:.75rem;box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);padding:1.5rem;margin-bottom:1.5rem}.input-group{margin-bottom:1rem}.input-group label{display:block;font-weight:500;color:#374151;margin-bottom:.5rem}.input-group input[type=number],.input-group select{width:100%;padding:.5rem .75rem;border:1px solid #d1d5db;border-radius:.375rem;transition:border-color .2s,box-shadow .2s}.input-group input[type=number]:focus,.input-group select:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 2px #bfdbfe}.checkbox-group{display:flex;align-items:center;margin-top:.5rem}.checkbox-group input{margin-right:.5rem;height:1rem;width:1rem}h2{font-size:1.25rem;font-weight:600;color:#1f2937;border-bottom:1px solid #e5e7eb;padding-bottom:.5rem;margin-bottom:1rem}.btn{padding:.75rem 1.5rem;border-radius:.375rem;font-weight:600;color:#fff;cursor:pointer;transition:background-color .2s;border:none}.btn-primary{background-color:#3b82f6}.btn-primary:hover{background-color:#2563eb}.btn-secondary{background-color:#6b7280}.btn-secondary:hover{background-color:#4b5563}#results{margin-top:1.5rem;padding:1.5rem;border-radius:.75rem;background-color:#f3f4f6;text-align:center}.result-item{margin-bottom:1rem}.result-item:last-child{margin-bottom:0}.result-item h3{font-size:1.1rem;font-weight:500;color:#4b5563}.result-item p{font-size:2rem;font-weight:700}
     </style>
 </head>
 <body class="bg-slate-100 p-4 sm:p-6 lg:p-8">
@@ -128,81 +50,24 @@
             <div class="card">
                 <h2>Score SOFA (Avaliação Sequencial de Falência Orgânica)</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-6">
-                    <!-- Respiratório -->
-                    <div class="input-group">
-                        <label>Função Respiratória</label>
-                        <input type="number" id="pao2" placeholder="PaO₂ (mmHg)" class="mb-2">
-                        <input type="number" id="fio2" placeholder="FiO₂ (%)" class="mb-2">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="vent_mec">
-                            <label for="vent_mec">Paciente em ventilação mecânica?</label>
-                        </div>
-                    </div>
-                    <!-- Coagulação -->
-                    <div class="input-group">
-                        <label for="plaquetas">Função de Coagulação</label>
-                        <input type="number" id="plaquetas" placeholder="Plaquetas (x10³/mm³)">
-                    </div>
-                    <!-- Hepático -->
-                    <div class="input-group">
-                        <label for="bilirrubina">Função Hepática</label>
-                        <input type="number" id="bilirrubina" placeholder="Bilirrubina Total (mg/dL)">
-                    </div>
-                    <!-- Cardiovascular -->
-                    <div class="input-group">
-                        <label>Função Cardiovascular</label>
-                        <input type="number" id="pam" placeholder="PAM (mmHg)" class="mb-2">
-                        <select id="vasopressores" class="mt-2">
-                            <option value="0">Sem vasopressores</option>
-                            <option value="2">Dopamina > 5 ou Dobutamina</option>
-                            <option value="3">Epinefrina ≤ 0.1 ou Norepinefrina ≤ 0.1</option>
-                            <option value="4">Epinefrina > 0.1 ou Norepinefrina > 0.1</option>
-                        </select>
-                    </div>
-                    <!-- Neurológico -->
-                    <div class="input-group">
-                        <label for="glasgow">Função Neurológica</label>
-                        <input type="number" id="glasgow" min="3" max="15" placeholder="Escala de Coma de Glasgow">
-                    </div>
-                    <!-- Renal -->
-                    <div class="input-group">
-                        <label>Função Renal (para SOFA)</label>
-                        <input type="number" id="creatinina_sofa" placeholder="Creatinina Sérica (mg/dL)" class="mb-2">
-                        <input type="number" id="debito_urinario_24h" placeholder="Débito Urinário em 24h (mL)">
-                    </div>
+                    <div class="input-group"><label>Função Respiratória</label><input type="number" id="pao2" placeholder="PaO₂ (mmHg)" class="mb-2"><input type="number" id="fio2" placeholder="FiO₂ (%)" class="mb-2"><div class="checkbox-group"><input type="checkbox" id="vent_mec"><label for="vent_mec">Paciente em ventilação mecânica?</label></div></div>
+                    <div class="input-group"><label for="plaquetas">Função de Coagulação</label><input type="number" id="plaquetas" placeholder="Plaquetas (x10³/mm³)"></div>
+                    <div class="input-group"><label for="bilirrubina">Função Hepática</label><input type="number" id="bilirrubina" placeholder="Bilirrubina Total (mg/dL)"></div>
+                    <div class="input-group"><label>Função Cardiovascular</label><input type="number" id="pam" placeholder="PAM (mmHg)" class="mb-2"><select id="vasopressores" class="mt-2"><option value="0">Sem vasopressores</option><option value="2">Dopamina > 5 ou Dobutamina</option><option value="3">Epinefrina ≤ 0.1 ou Norepinefrina ≤ 0.1</option><option value="4">Epinefrina > 0.1 ou Norepinefrina > 0.1</option></select></div>
+                    <div class="input-group"><label for="glasgow">Função Neurológica</label><input type="number" id="glasgow" min="3" max="15" placeholder="Escala de Coma de Glasgow"></div>
+                    <div class="input-group"><label>Função Renal (para SOFA)</label><input type="number" id="creatinina_sofa" placeholder="Creatinina Sérica (mg/dL)" class="mb-2"><input type="number" id="debito_urinario_24h" placeholder="Débito Urinário em 24h (mL)"></div>
                 </div>
             </div>
-
             <!-- AKIN Score Section -->
             <div class="card">
                 <h2>Score AKIN (Classificação de Lesão Renal Aguda)</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-6">
-                    <div class="input-group">
-                        <label for="peso">Peso do Paciente (kg)</label>
-                        <input type="number" id="peso" placeholder="Ex: 70">
-                    </div>
-                    <div class="input-group">
-                        <label for="creatinina_basal">Creatinina Sérica Basal (mg/dL)</label>
-                        <input type="number" id="creatinina_basal" placeholder="Valor de referência">
-                    </div>
-                    <div class="input-group">
-                        <label for="creatinina_atual">Creatinina Sérica Atual (mg/dL)</label>
-                        <input type="number" id="creatinina_atual" placeholder="Valor medido hoje">
-                    </div>
-                    <div class="input-group">
-                        <label for="debito_urinario_total">Débito Urinário Total (mL)</label>
-                        <input type="number" id="debito_urinario_total" placeholder="Volume total coletado">
-                    </div>
-                    <div class="input-group">
-                        <label for="periodo_afericao">Período de Aferição (horas)</label>
-                        <input type="number" id="periodo_afericao" placeholder="Ex: 6, 12 ou 24">
-                    </div>
-                     <div class="input-group flex items-center mt-6">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="trs">
-                            <label for="trs">Paciente iniciou Terapia Renal Substitutiva (TRS)?</label>
-                        </div>
-                    </div>
+                    <div class="input-group"><label for="peso">Peso do Paciente (kg)</label><input type="number" id="peso" placeholder="Ex: 70"></div>
+                    <div class="input-group"><label for="creatinina_basal">Creatinina Sérica Basal (mg/dL)</label><input type="number" id="creatinina_basal" placeholder="Valor de referência"></div>
+                    <div class="input-group"><label for="creatinina_atual">Creatinina Sérica Atual (mg/dL)</label><input type="number" id="creatinina_atual" placeholder="Valor medido hoje"></div>
+                    <div class="input-group"><label for="debito_urinario_total">Débito Urinário Total (mL)</label><input type="number" id="debito_urinario_total" placeholder="Volume total coletado"></div>
+                    <div class="input-group"><label for="periodo_afericao">Período de Aferição (horas)</label><input type="number" id="periodo_afericao" placeholder="Ex: 6, 12 ou 24"></div>
+                    <div class="input-group flex items-center mt-6"><div class="checkbox-group"><input type="checkbox" id="trs"><label for="trs">Paciente iniciou Terapia Renal Substitutiva (TRS)?</label></div></div>
                 </div>
             </div>
         </div>
@@ -210,14 +75,8 @@
         <!-- Results Section -->
         <div id="results">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="result-item" id="sofa-result-container">
-                    <h3>Score SOFA Total</h3>
-                    <p id="sofa-result" class="text-blue-600 hidden">0</p>
-                </div>
-                <div class="result-item" id="akin-result-container">
-                    <h3>Estágio AKIN</h3>
-                    <p id="akin-result" class="text-blue-600 hidden">N/A</p>
-                </div>
+                <div class="result-item"><h3 >Score SOFA Total</h3><p id="sofa-result" class="text-blue-600 hidden">0</p></div>
+                <div class="result-item"><h3 >Estágio AKIN</h3><p id="akin-result" class="text-blue-600 hidden">N/A</p></div>
             </div>
         </div>
 
@@ -226,11 +85,10 @@
             <button type="button" id="calculate-btn" class="btn btn-primary">Calcular Scores</button>
             <button type="button" id="reset-btn" class="btn btn-secondary">Limpar Campos</button>
         </div>
-
     </div>
 
     <script>
-        // --- PWA Service Worker Registration ---
+        // --- PWA Service Worker Registration (Standard Method) ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
@@ -239,123 +97,12 @@
             });
         }
 
-        // --- Calculation Logic ---
+        // --- Lógica da Calculadora ---
         document.getElementById('calculate-btn').addEventListener('click', () => {
-            // SOFA Calculation
-            let sofaScore = 0;
-            const pao2 = parseFloat(document.getElementById('pao2').value);
-            const fio2 = parseFloat(document.getElementById('fio2').value);
-            const ventMec = document.getElementById('vent_mec').checked;
-            if (pao2 && fio2 > 0) {
-                const pao2_fio2_ratio = pao2 / (fio2 / 100);
-                if (pao2_fio2_ratio < 100 && ventMec) sofaScore += 4;
-                else if (pao2_fio2_ratio < 200 && ventMec) sofaScore += 3;
-                else if (pao2_fio2_ratio < 300) sofaScore += 2;
-                else if (pao2_fio2_ratio < 400) sofaScore += 1;
-            }
-            const plaquetas = parseFloat(document.getElementById('plaquetas').value);
-            if (!isNaN(plaquetas)) {
-                if (plaquetas < 20) sofaScore += 4;
-                else if (plaquetas < 50) sofaScore += 3;
-                else if (plaquetas < 100) sofaScore += 2;
-                else if (plaquetas < 150) sofaScore += 1;
-            }
-            const bilirrubina = parseFloat(document.getElementById('bilirrubina').value);
-            if (!isNaN(bilirrubina)) {
-                if (bilirrubina >= 12.0) sofaScore += 4;
-                else if (bilirrubina >= 6.0) sofaScore += 3;
-                else if (bilirrubina >= 2.0) sofaScore += 2;
-                else if (bilirrubina >= 1.2) sofaScore += 1;
-            }
-            const pam = parseFloat(document.getElementById('pam').value);
-            const vasopressores = parseInt(document.getElementById('vasopressores').value);
-            if (vasopressores > 0) {
-                sofaScore += vasopressores;
-            } else if (!isNaN(pam) && pam < 70) {
-                sofaScore += 1;
-            }
-            const glasgow = parseInt(document.getElementById('glasgow').value);
-            if (!isNaN(glasgow)) {
-                if (glasgow < 6) sofaScore += 4;
-                else if (glasgow <= 9) sofaScore += 3;
-                else if (glasgow <= 12) sofaScore += 2;
-                else if (glasgow <= 14) sofaScore += 1;
-            }
-            const creatininaSofa = parseFloat(document.getElementById('creatinina_sofa').value);
-            const debitoUrinario24h = parseFloat(document.getElementById('debito_urinario_24h').value);
-            let renalScore = 0;
-            if (!isNaN(creatininaSofa)) {
-                if (creatininaSofa >= 5.0) renalScore = 4;
-                else if (creatininaSofa >= 3.5) renalScore = 3;
-                else if (creatininaSofa >= 2.0) renalScore = 2;
-                else if (creatininaSofa >= 1.2) renalScore = 1;
-            }
-            if (!isNaN(debitoUrinario24h)) {
-                if (debitoUrinario24h < 200 && renalScore < 4) renalScore = 4;
-                else if (debitoUrinario24h < 500 && renalScore < 3) renalScore = 3;
-            }
-            sofaScore += renalScore;
-
-            // AKIN Calculation
-            let akinStage = 0;
-            const peso = parseFloat(document.getElementById('peso').value);
-            const creatininaBasal = parseFloat(document.getElementById('creatinina_basal').value);
-            const creatininaAtual = parseFloat(document.getElementById('creatinina_atual').value);
-            const debitoUrinarioTotal = parseFloat(document.getElementById('debito_urinario_total').value);
-            const periodoAfericao = parseFloat(document.getElementById('periodo_afericao').value);
-            const trs = document.getElementById('trs').checked;
-            let akinCreatinina = 0;
-            let akinDebito = 0;
-            if (trs) {
-                akinCreatinina = 3;
-            } else if (!isNaN(creatininaBasal) && !isNaN(creatininaAtual)) {
-                const aumentoAbsoluto = creatininaAtual - creatininaBasal;
-                const aumentoRelativo = creatininaAtual / creatininaBasal;
-                if (creatininaAtual >= 4.0 && aumentoAbsoluto >= 0.5) akinCreatinina = 3;
-                else if (aumentoRelativo >= 3.0) akinCreatinina = 3;
-                else if (aumentoRelativo >= 2.0) akinCreatinina = 2;
-                else if (aumentoRelativo >= 1.5 || aumentoAbsoluto >= 0.3) akinCreatinina = 1;
-            }
-            if (!isNaN(peso) && !isNaN(debitoUrinarioTotal) && !isNaN(periodoAfericao) && peso > 0 && periodoAfericao > 0) {
-                const debitoNormalizado = debitoUrinarioTotal / peso / periodoAfericao;
-                if (debitoNormalizado < 0.3 && periodoAfericao >= 24) akinDebito = 3;
-                else if (debitoUrinarioTotal === 0 && periodoAfericao >= 12) akinDebito = 3;
-                else if (debitoNormalizado < 0.5 && periodoAfericao >= 12) akinDebito = 2;
-                else if (debitoNormalizado < 0.5 && periodoAfericao >= 6) akinDebito = 1;
-            }
-            akinStage = Math.max(akinCreatinina, akinDebito);
-
-            // Display Results
-            const sofaResultEl = document.getElementById('sofa-result');
-            sofaResultEl.textContent = sofaScore;
-            sofaResultEl.classList.remove('hidden');
-            sofaResultEl.style.color = sofaScore > 8 ? '#DC2626' : (sofaScore > 4 ? '#F59E0B' : '#3B82F6');
-            
-            const akinResultEl = document.getElementById('akin-result');
-            if (akinStage > 0) {
-                akinResultEl.textContent = `Estágio ${akinStage}`;
-            } else {
-                akinResultEl.textContent = "Sem LRA";
-            }
-            akinResultEl.classList.remove('hidden');
-            akinResultEl.style.color = akinStage === 3 ? '#DC2626' : (akinStage > 1 ? '#F59E0B' : '#3B82F6');
+            let sofaScore=0;const pao2=parseFloat(document.getElementById('pao2').value),fio2=parseFloat(document.getElementById('fio2').value),ventMec=document.getElementById('vent_mec').checked;pao2&&fio2>0&&(()=>{const e=pao2/(fio2/100);e<100&&ventMec?sofaScore+=4:e<200&&ventMec?sofaScore+=3:e<300?sofaScore+=2:e<400&&(sofaScore+=1)})();const plaquetas=parseFloat(document.getElementById('plaquetas').value);isNaN(plaquetas)||(plaquetas<20?sofaScore+=4:plaquetas<50?sofaScore+=3:plaquetas<100?sofaScore+=2:plaquetas<150&&(sofaScore+=1));const bilirrubina=parseFloat(document.getElementById('bilirrubina').value);isNaN(bilirrubina)||(bilirrubina>=12?sofaScore+=4:bilirrubina>=6?sofaScore+=3:bilirrubina>=2?sofaScore+=2:bilirrubina>=1.2&&(sofaScore+=1));const pam=parseFloat(document.getElementById('pam').value),vasopressores=parseInt(document.getElementById('vasopressores').value);vasopressores>0?sofaScore+=vasopressores:isNaN(pam)||pam>=70||(sofaScore+=1);const glasgow=parseInt(document.getElementById('glasgow').value);isNaN(glasgow)||(glasgow<6?sofaScore+=4:glasgow<=9?sofaScore+=3:glasgow<=12?sofaScore+=2:glasgow<=14&&(sofaScore+=1));const creatininaSofa=parseFloat(document.getElementById('creatinina_sofa').value),debitoUrinario24h=parseFloat(document.getElementById('debito_urinario_24h').value);let renalScore=0;isNaN(creatininaSofa)||(creatininaSofa>=5?renalScore=4:creatininaSofa>=3.5?renalScore=3:creatininaSofa>=2?renalScore=2:creatininaSofa>=1.2&&(renalScore=1)),isNaN(debitoUrinario24h)||(debitoUrinario24h<200&&renalScore<4?renalScore=4:debitoUrinario24h<500&&renalScore<3&&(renalScore=3)),sofaScore+=renalScore;let akinStage=0;const peso=parseFloat(document.getElementById('peso').value),creatininaBasal=parseFloat(document.getElementById('creatinina_basal').value),creatininaAtual=parseFloat(document.getElementById('creatinina_atual').value),debitoUrinarioTotal=parseFloat(document.getElementById('debito_urinario_total').value),periodoAfericao=parseFloat(document.getElementById('periodo_afericao').value),trs=document.getElementById('trs').checked;let akinCreatinina=0,akinDebito=0;trs?akinCreatinina=3:isNaN(creatininaBasal)||isNaN(creatininaAtual)||(creatininaAtual>=4&&creatininaAtual-creatininaBasal>=.5?akinCreatinina=3:creatininaAtual/creatininaBasal>=3?akinCreatinina=3:creatininaAtual/creatininaBasal>=2?akinCreatinina=2:(creatininaAtual/creatininaBasal>=1.5||creatininaAtual-creatininaBasal>=.3)&&(akinCreatinina=1)),isNaN(peso)||isNaN(debitoUrinarioTotal)||isNaN(periodoAfericao)||!(peso>0)||!(periodoAfericao>0)||(debitoUrinarioTotal/peso/periodoAfericao<.3&&periodoAfericao>=24?akinDebito=3:0===debitoUrinarioTotal&&periodoAfericao>=12?akinDebito=3:debitoUrinarioTotal/peso/periodoAfericao<.5&&periodoAfericao>=12?akinDebito=2:debitoUrinarioTotal/peso/periodoAfericao<.5&&periodoAfericao>=6&&(akinDebito=1)),akinStage=Math.max(akinCreatinina,akinDebito);const sofaResultEl=document.getElementById('sofa-result');sofaResultEl.textContent=sofaScore,sofaResultEl.classList.remove('hidden'),sofaResultEl.style.color=sofaScore>8?"#DC2626":sofaScore>4?"#F59E0B":"#3B82F6";const akinResultEl=document.getElementById('akin-result');akinStage>0?akinResultEl.textContent=`Estágio ${akinStage}`:akinResultEl.textContent="Sem LRA",akinResultEl.classList.remove('hidden'),akinResultEl.style.color=akinStage===3?"#DC2626":akinStage>1?"#F59E0B":"#3B82F6"
         });
-
-        // --- Reset Button Logic ---
         document.getElementById('reset-btn').addEventListener('click', () => {
-             const inputs = document.querySelectorAll('#calculator-inputs input, #calculator-inputs select');
-             inputs.forEach(input => {
-                if (input.type === 'checkbox') {
-                    input.checked = false;
-                } else if (input.tagName === 'SELECT') {
-                    input.selectedIndex = 0;
-                } else {
-                    input.value = '';
-                }
-             });
-
-             document.getElementById('sofa-result').classList.add('hidden');
-             document.getElementById('akin-result').classList.add('hidden');
+            const e=document.querySelectorAll('#calculator-inputs input, #calculator-inputs select');e.forEach(e=>{"checkbox"===e.type?e.checked=!1:"SELECT"===e.tagName?e.selectedIndex=0:e.value=""}),document.getElementById('sofa-result').classList.add('hidden'),document.getElementById('akin-result').classList.add('hidden')
         });
     </script>
 </body>
