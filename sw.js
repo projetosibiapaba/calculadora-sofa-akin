@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sofa-akin-calculator-v3'; // Nova versão para forçar a atualização
+const CACHE_NAME = 'sofa-akin-calculator-v4'; // Nova versão para forçar a atualização
 const CORE_ASSETS = [
     './',
     './index.html',
@@ -7,7 +7,7 @@ const CORE_ASSETS = [
     './images/icon-512x512.png'
 ];
 
-// Evento de Instalação: guarda os ficheiros principais da aplicação
+// Evento de Instalação: guarda os ficheiros essenciais da aplicação
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -27,18 +27,13 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Evento Fetch: serve a aplicação com uma estratégia "network falling back to cache"
+// Evento Fetch: serve a aplicação a partir do cache primeiro
 self.addEventListener('fetch', event => {
     event.respondWith(
-        fetch(event.request).then(networkResponse => {
-            // Se a resposta da rede for bem-sucedida, guarda no cache e retorna
-            return caches.open(CACHE_NAME).then(cache => {
-                cache.put(event.request, networkResponse.clone());
-                return networkResponse;
-            });
-        }).catch(() => {
-            // Se a rede falhar (offline), tenta buscar no cache
-            return caches.match(event.request);
-        })
+        caches.match(event.request)
+            .then(response => {
+                // Retorna a resposta do cache se existir, senão busca na rede
+                return response || fetch(event.request);
+            })
     );
 });
