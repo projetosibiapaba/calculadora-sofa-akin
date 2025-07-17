@@ -1,25 +1,17 @@
-const CACHE_NAME = 'sofa-akin-calculator-v2'; // Versão atualizada para forçar a atualização
-const urlsToCache = [
+const CACHE_NAME = 'sofa-akin-calculator-v3'; // Nova versão para forçar a atualização
+const CORE_ASSETS = [
     './',
     './index.html',
     './manifest.json',
     './images/icon-192x192.png',
-    './images/icon-512x512.png',
-    'https://cdn.tailwindcss.com',
-    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
+    './images/icon-512x512.png'
 ];
 
-// Evento de Instalação: guarda os ficheiros essenciais
+// Evento de Instalação: guarda os ficheiros principais da aplicação
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then(cache => {
-                console.log('Cache aberto');
-                return cache.addAll(urlsToCache);
-            })
-            .catch(err => {
-                console.error("Falha ao adicionar ficheiros ao cache: ", err);
-            })
+            .then(cache => cache.addAll(CORE_ASSETS))
     );
 });
 
@@ -28,27 +20,25 @@ self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
-                cacheNames.filter(cache => {
-                    return cache.startsWith('sofa-akin-calculator-') && cache !== CACHE_NAME;
-                }).map(cache => {
-                    return caches.delete(cache);
-                })
+                cacheNames.filter(name => name.startsWith('sofa-akin-calculator-') && name !== CACHE_NAME)
+                    .map(name => caches.delete(name))
             );
         })
     );
 });
 
-// Evento Fetch: serve a aplicação a partir do cache
+// Evento Fetch: serve a aplicação com uma estratégia "network falling back to cache"
 self.addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                // Se o recurso estiver no cache, retorna-o
-                if (response) {
-                    return response;
-                }
-                // Senão, busca na rede
-                return fetch(event.request);
-            })
+        fetch(event.request).then(networkResponse => {
+            // Se a resposta da rede for bem-sucedida, guarda no cache e retorna
+            return caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, networkResponse.clone());
+                return networkResponse;
+            });
+        }).catch(() => {
+            // Se a rede falhar (offline), tenta buscar no cache
+            return caches.match(event.request);
+        })
     );
 });
