@@ -4,17 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- PWA Meta  Tags -->
+    <!-- PWA Meta Tags -->
     <title>Calculadora SOFA & AKIN</title>
     <meta name="theme-color" content="#3B82F6"/>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="images/icon-192x192.png">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* --- Google Fonts Import --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        /* --- Tailwind CSS v3.4.1 --- */
+        /*
+        ! tailwindcss v3.4.1 | MIT License | https://tailwindcss.com
+        */
+        *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::before,::after{--tw-content:''}html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Inter, sans-serif;font-feature-settings:normal}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,[type='button'],[type='reset'],[type='submit']{-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type='search']{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role="button"]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]{display:none}.p-4{padding:1rem}.p-8{padding:2rem}.p-6{padding:1.5rem}.text-center{text-align:center}.mb-8{margin-bottom:2rem}.mb-2{margin-bottom:.5rem}.mt-2{margin-top:.5rem}.mt-6{margin-top:1.5rem}.mb-1{margin-bottom:.25rem}.mb-4{margin-bottom:1rem}.mt-4{margin-top:1rem}.grid{display:grid}.hidden{display:none}.h-screen{height:100vh}.w-full{width:100%}.max-w-4xl{max-width:56rem}.flex{display:flex}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.items-center{align-items:center}.justify-center{justify-content:center}.gap-4{gap:1rem}.space-x-4>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.rounded-lg{border-radius:.5rem}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity))}.p-2{padding:.5rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.font-bold{font-weight:700}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity))}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)}@media (min-width:768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:gap-x-6{column-gap:1.5rem}}@media (min-width:1024px){.lg\:p-8{padding:2rem}}
+
+        /* --- Custom Styles --- */
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -53,6 +59,8 @@
         }
         .checkbox-group input {
             margin-right: 0.5rem;
+            height: 1rem;
+            width: 1rem;
         }
         h2 {
             font-size: 1.25rem;
@@ -69,6 +77,7 @@
             color: white;
             cursor: pointer;
             transition: background-color 0.2s;
+            border: none;
         }
         .btn-primary {
             background-color: #3B82F6;
@@ -91,6 +100,9 @@
         }
         .result-item {
             margin-bottom: 1rem;
+        }
+        .result-item:last-child {
+            margin-bottom: 0;
         }
         .result-item h3 {
             font-size: 1.1rem;
@@ -115,7 +127,7 @@
             <!-- SOFA Score Section -->
             <div class="card">
                 <h2>Score SOFA (Avaliação Sequencial de Falência Orgânica)</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-6">
                     <!-- Respiratório -->
                     <div class="input-group">
                         <label>Função Respiratória</label>
@@ -142,7 +154,7 @@
                         <input type="number" id="pam" placeholder="PAM (mmHg)" class="mb-2">
                         <select id="vasopressores" class="mt-2">
                             <option value="0">Sem vasopressores</option>
-                            <option value="2">Dopamina > 5 ou Dobutamina (qualquer dose)</option>
+                            <option value="2">Dopamina > 5 ou Dobutamina</option>
                             <option value="3">Epinefrina ≤ 0.1 ou Norepinefrina ≤ 0.1</option>
                             <option value="4">Epinefrina > 0.1 ou Norepinefrina > 0.1</option>
                         </select>
@@ -164,7 +176,7 @@
             <!-- AKIN Score Section -->
             <div class="card">
                 <h2>Score AKIN (Classificação de Lesão Renal Aguda)</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-6">
                     <div class="input-group">
                         <label for="peso">Peso do Paciente (kg)</label>
                         <input type="number" id="peso" placeholder="Ex: 70">
@@ -193,13 +205,9 @@
                     </div>
                 </div>
             </div>
-
-            <div class="flex justify-center space-x-4">
-                <button type="button" id="calculate-btn" class="btn btn-primary">Calcular Scores</button>
-                <button type="reset" class="btn btn-secondary">Limpar Campos</button>
-            </div>
         </form>
 
+        <!-- Results Section - MOVED HERE -->
         <div id="results" class="hidden">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="result-item" id="sofa-result-container">
@@ -212,19 +220,22 @@
                 </div>
             </div>
         </div>
+
+        <!-- Buttons Section - MOVED HERE -->
+        <div class="flex justify-center space-x-4 mt-6">
+            <button type="button" id="calculate-btn" class="btn btn-primary">Calcular Scores</button>
+            <button type="button" id="reset-btn" class="btn btn-secondary">Limpar Campos</button>
+        </div>
+
     </div>
 
     <script>
         // --- PWA Service Worker Registration ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(registration => {
-                        console.log('Service Worker registrado com sucesso:', registration);
-                    })
-                    .catch(error => {
-                        console.log('Falha ao registrar o Service Worker:', error);
-                    });
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => console.log('Service Worker registrado com sucesso.'))
+                    .catch(error => console.log('Falha ao registrar o Service Worker:', error));
             });
         }
 
@@ -235,7 +246,7 @@
             const pao2 = parseFloat(document.getElementById('pao2').value);
             const fio2 = parseFloat(document.getElementById('fio2').value);
             const ventMec = document.getElementById('vent_mec').checked;
-            if (pao2 && fio2) {
+            if (pao2 && fio2 > 0) {
                 const pao2_fio2_ratio = pao2 / (fio2 / 100);
                 if (pao2_fio2_ratio < 100 && ventMec) sofaScore += 4;
                 else if (pao2_fio2_ratio < 200 && ventMec) sofaScore += 3;
@@ -328,7 +339,9 @@
             akinResultEl.style.color = akinStage === 3 ? '#DC2626' : (akinStage > 1 ? '#F59E0B' : '#3B82F6');
         });
 
-        document.getElementById('scores-form').addEventListener('reset', () => {
+        // --- Reset Button Logic ---
+        document.getElementById('reset-btn').addEventListener('click', () => {
+             document.getElementById('scores-form').reset();
              document.getElementById('results').classList.add('hidden');
              document.getElementById('sofa-result').textContent = '0';
              document.getElementById('akin-result').textContent = 'N/A';
