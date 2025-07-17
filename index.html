@@ -45,6 +45,7 @@
             --cor-borda: #D1D5DB;
             --cor-alerta-medio: #F59E0B;
             --cor-alerta-alto: #DC2626;
+            --cor-cinza-info: #6B7280;
         }
 
         body {
@@ -80,16 +81,23 @@
         h2{font-size:1.25rem;font-weight:600;color:var(--cor-verde-titulo);border-bottom:1px solid #e5e7eb;padding-bottom:.5rem;margin-bottom:1rem}
         
         .btn{padding:.75rem 1.5rem;border-radius:.375rem;font-weight:600;color:#fff;cursor:pointer;transition:background-color .2s;border:none}
-        .btn-primary{background-color:var(--cor-verde-secundario)} /* Cor invertida */
+        .btn-primary{background-color:var(--cor-verde-secundario)}
         .btn-primary:hover{background-color:#4a7021}
-        .btn-secondary{background-color:var(--cor-verde-principal)} /* Cor invertida */
+        .btn-secondary{background-color:var(--cor-verde-principal)}
         .btn-secondary:hover{background-color:var(--cor-verde-escuro)}
+        .btn-info { background-color: var(--cor-cinza-info); width: 100%; margin-top: 1rem; }
+        .btn-info:hover { background-color: #4B5563; }
         
         #results{margin-top:1.5rem;padding:1.5rem;border-radius:.75rem;background-color:#f3f4f6;text-align:center}
         .result-item{margin-bottom:1rem}.result-item:last-child{margin-bottom:0}
         .result-item h3{font-size:1.1rem;font-weight:500;color:var(--cor-texto-secundario)}
         .result-item p{font-size:2rem;font-weight:700}
         .gap-4{gap:1rem}
+
+        #calculation-memory { padding: 1.5rem; background-color: #eef2ff; border: 1px solid #c7d2fe; }
+        #calculation-memory h3 { font-size: 1.1rem; font-weight: 600; color: var(--cor-verde-titulo); margin-bottom: 0.75rem; }
+        #calculation-memory p { font-size: 0.9rem; color: var(--cor-texto-principal); margin-bottom: 0.25rem; line-height: 1.5; }
+        #calculation-memory strong { color: var(--cor-verde-secundario); }
 
         .flex{display:flex}.justify-center{justify-content:center}.space-x-4>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}
         .mt-6{margin-top:1.5rem}
@@ -151,6 +159,17 @@
             <button type="button" id="calculate-btn" class="btn btn-primary">Calcular Scores</button>
             <button type="button" id="reset-btn" class="btn btn-secondary">Limpar Campos</button>
         </div>
+        
+        <!-- Calculation Memory Section -->
+        <div id="memory-container" class="text-center">
+            <button type="button" id="toggle-memory-btn" class="btn btn-info hidden">Mostrar Memória de Cálculo</button>
+            <div id="calculation-memory" class="hidden card mt-4 text-left">
+                <div id="sofa-memory"></div>
+                <hr class="my-4">
+                <div id="akin-memory"></div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -165,23 +184,172 @@
 
         // --- Lógica da Calculadora ---
         document.getElementById('calculate-btn').addEventListener('click', () => {
-            let sofaScore=0;const pao2=parseFloat(document.getElementById('pao2').value),fio2=parseFloat(document.getElementById('fio2').value),ventMec=document.getElementById('vent_mec').checked;pao2&&fio2>0&&(()=>{const e=pao2/(fio2/100);e<100&&ventMec?sofaScore+=4:e<200&&ventMec?sofaScore+=3:e<300?sofaScore+=2:e<400&&(sofaScore+=1)})();const plaquetas=parseFloat(document.getElementById('plaquetas').value);isNaN(plaquetas)||(plaquetas<20?sofaScore+=4:plaquetas<50?sofaScore+=3:plaquetas<100?sofaScore+=2:plaquetas<150&&(sofaScore+=1));const bilirrubina=parseFloat(document.getElementById('bilirrubina').value);isNaN(bilirrubina)||(bilirrubina>=12?sofaScore+=4:bilirrubina>=6?sofaScore+=3:bilirrubina>=2?sofaScore+=2:bilirrubina>=1.2&&(sofaScore+=1));const pam=parseFloat(document.getElementById('pam').value),vasopressores=parseInt(document.getElementById('vasopressores').value);vasopressores>0?sofaScore+=vasopressores:isNaN(pam)||pam>=70||(sofaScore+=1);const glasgow=parseInt(document.getElementById('glasgow').value);isNaN(glasgow)||(glasgow<6?sofaScore+=4:glasgow<=9?sofaScore+=3:glasgow<=12?sofaScore+=2:glasgow<=14&&(sofaScore+=1));const creatininaSofa=parseFloat(document.getElementById('creatinina_sofa').value),debitoUrinario24h=parseFloat(document.getElementById('debito_urinario_24h').value);let renalScore=0;isNaN(creatininaSofa)||(creatininaSofa>=5?renalScore=4:creatininaSofa>=3.5?renalScore=3:creatininaSofa>=2?renalScore=2:creatininaSofa>=1.2&&(renalScore=1)),isNaN(debitoUrinario24h)||(debitoUrinario24h<200&&renalScore<4?renalScore=4:debitoUrinario24h<500&&renalScore<3&&(renalScore=3)),sofaScore+=renalScore;let akinStage=0;const peso=parseFloat(document.getElementById('peso').value),creatininaBasal=parseFloat(document.getElementById('creatinina_basal').value),creatininaAtual=parseFloat(document.getElementById('creatinina_atual').value),debitoUrinarioTotal=parseFloat(document.getElementById('debito_urinario_total').value),periodoAfericao=parseFloat(document.getElementById('periodo_afericao').value),trs=document.getElementById('trs').checked;let akinCreatinina=0,akinDebito=0;trs?akinCreatinina=3:isNaN(creatininaBasal)||isNaN(creatininaAtual)||(creatininaAtual>=4&&creatininaAtual-creatininaBasal>=.5?akinCreatinina=3:creatininaAtual/creatininaBasal>=3?akinCreatinina=3:creatininaAtual/creatininaBasal>=2?akinCreatinina=2:(creatininaAtual/creatininaBasal>=1.5||creatininaAtual-creatininaBasal>=.3)&&(akinCreatinina=1)),isNaN(peso)||isNaN(debitoUrinarioTotal)||isNaN(periodoAfericao)||!(peso>0)||!(periodoAfericao>0)||(debitoUrinarioTotal/peso/periodoAfericao<.3&&periodoAfericao>=24?akinDebito=3:0===debitoUrinarioTotal&&periodoAfericao>=12?akinDebito=3:debitoUrinarioTotal/peso/periodoAfericao<.5&&periodoAfericao>=12?akinDebito=2:debitoUrinarioTotal/peso/periodoAfericao<.5&&periodoAfericao>=6&&(akinDebito=1)),akinStage=Math.max(akinCreatinina,akinDebito);
+            let sofaMemoryHtml = '<h3>Memória de Cálculo - SOFA</h3>';
+            let akinMemoryHtml = '<h3>Memória de Cálculo - AKIN</h3>';
+
+            // SOFA Calculation
+            let sofaScore = 0;
             
-            const sofaResultEl=document.getElementById('sofa-result');
-            sofaResultEl.textContent=sofaScore;
+            // Respiratório
+            const pao2 = parseFloat(document.getElementById('pao2').value);
+            const fio2 = parseFloat(document.getElementById('fio2').value);
+            const ventMec = document.getElementById('vent_mec').checked;
+            let respPoints = 0;
+            if (pao2 && fio2 > 0) {
+                const ratio = pao2 / (fio2 / 100);
+                if (ratio < 100 && ventMec) respPoints = 4;
+                else if (ratio < 200 && ventMec) respPoints = 3;
+                else if (ratio < 300) respPoints = 2;
+                else if (ratio < 400) respPoints = 1;
+                sofaMemoryHtml += `<p><strong>Respiratório:</strong> Relação PaO₂/FiO₂ de ${ratio.toFixed(0)} ${ventMec ? ' (com VM)' : ''} → <strong>${respPoints} ponto(s)</strong>.</p>`;
+            } else {
+                sofaMemoryHtml += `<p><strong>Respiratório:</strong> Dados insuficientes → <strong>0 pontos</strong>.</p>`;
+            }
+            sofaScore += respPoints;
+
+            // Coagulação
+            const plaquetas = parseFloat(document.getElementById('plaquetas').value);
+            let coagPoints = 0;
+            if (!isNaN(plaquetas)) {
+                if (plaquetas < 20) coagPoints = 4;
+                else if (plaquetas < 50) coagPoints = 3;
+                else if (plaquetas < 100) coagPoints = 2;
+                else if (plaquetas < 150) coagPoints = 1;
+                sofaMemoryHtml += `<p><strong>Coagulação:</strong> Plaquetas de ${plaquetas}x10³/mm³ → <strong>${coagPoints} ponto(s)</strong>.</p>`;
+            } else {
+                sofaMemoryHtml += `<p><strong>Coagulação:</strong> Dados insuficientes → <strong>0 pontos</strong>.</p>`;
+            }
+            sofaScore += coagPoints;
+
+            // Hepático
+            const bilirrubina = parseFloat(document.getElementById('bilirrubina').value);
+            let hepPoints = 0;
+            if (!isNaN(bilirrubina)) {
+                if (bilirrubina >= 12.0) hepPoints = 4;
+                else if (bilirrubina >= 6.0) hepPoints = 3;
+                else if (bilirrubina >= 2.0) hepPoints = 2;
+                else if (bilirrubina >= 1.2) hepPoints = 1;
+                sofaMemoryHtml += `<p><strong>Hepático:</strong> Bilirrubina de ${bilirrubina} mg/dL → <strong>${hepPoints} ponto(s)</strong>.</p>`;
+            } else {
+                sofaMemoryHtml += `<p><strong>Hepático:</strong> Dados insuficientes → <strong>0 pontos</strong>.</p>`;
+            }
+            sofaScore += hepPoints;
+
+            // Cardiovascular
+            const pam = parseFloat(document.getElementById('pam').value);
+            const vasopressores = parseInt(document.getElementById('vasopressores').value);
+            let cardPoints = 0;
+            if (vasopressores > 0) {
+                cardPoints = vasopressores;
+                sofaMemoryHtml += `<p><strong>Cardiovascular:</strong> Uso de vasopressores → <strong>${cardPoints} ponto(s)</strong>.</p>`;
+            } else if (!isNaN(pam)) {
+                if (pam < 70) cardPoints = 1;
+                sofaMemoryHtml += `<p><strong>Cardiovascular:</strong> PAM de ${pam} mmHg → <strong>${cardPoints} ponto(s)</strong>.</p>`;
+            } else {
+                sofaMemoryHtml += `<p><strong>Cardiovascular:</strong> Dados insuficientes → <strong>0 pontos</strong>.</p>`;
+            }
+            sofaScore += cardPoints;
+
+            // Neurológico
+            const glasgow = parseInt(document.getElementById('glasgow').value);
+            let neuroPoints = 0;
+            if (!isNaN(glasgow)) {
+                if (glasgow < 6) neuroPoints = 4;
+                else if (glasgow <= 9) neuroPoints = 3;
+                else if (glasgow <= 12) neuroPoints = 2;
+                else if (glasgow <= 14) neuroPoints = 1;
+                sofaMemoryHtml += `<p><strong>Neurológico:</strong> Glasgow de ${glasgow} → <strong>${neuroPoints} ponto(s)</strong>.</p>`;
+            } else {
+                sofaMemoryHtml += `<p><strong>Neurológico:</strong> Dados insuficientes → <strong>0 pontos</strong>.</p>`;
+            }
+            sofaScore += neuroPoints;
+
+            // Renal
+            const creatininaSofa = parseFloat(document.getElementById('creatinina_sofa').value);
+            const debitoUrinario24h = parseFloat(document.getElementById('debito_urinario_24h').value);
+            let renalPoints = 0;
+            if (!isNaN(creatininaSofa)) {
+                if (creatininaSofa >= 5.0) renalPoints = 4;
+                else if (creatininaSofa >= 3.5) renalPoints = 3;
+                else if (creatininaSofa >= 2.0) renalPoints = 2;
+                else if (creatininaSofa >= 1.2) renalPoints = 1;
+            }
+            if (!isNaN(debitoUrinario24h)) {
+                if (debitoUrinario24h < 200 && renalPoints < 4) renalPoints = 4;
+                else if (debitoUrinario24h < 500 && renalPoints < 3) renalPoints = 3;
+            }
+            sofaMemoryHtml += `<p><strong>Renal:</strong> Creatinina de ${creatininaSofa || 'N/A'} e Débito de ${debitoUrinario24h || 'N/A'} mL/24h → <strong>${renalPoints} ponto(s)</strong>.</p>`;
+            sofaScore += renalPoints;
+
+            // AKIN Calculation
+            let akinStage = 0;
+            const peso = parseFloat(document.getElementById('peso').value);
+            const creatininaBasal = parseFloat(document.getElementById('creatinina_basal').value);
+            const creatininaAtual = parseFloat(document.getElementById('creatinina_atual').value);
+            const debitoUrinarioTotal = parseFloat(document.getElementById('debito_urinario_total').value);
+            const periodoAfericao = parseFloat(document.getElementById('periodo_afericao').value);
+            const trs = document.getElementById('trs').checked;
+            let akinCreatinina = 0, akinDebito = 0;
+            
+            if (trs) {
+                akinCreatinina = 3;
+                akinMemoryHtml += `<p><strong>Critério de Creatinina:</strong> Início de TRS → <strong>Estágio 3</strong>.</p>`;
+            } else if (!isNaN(creatininaBasal) && !isNaN(creatininaAtual)) {
+                const aumentoAbsoluto = creatininaAtual - creatininaBasal;
+                const aumentoRelativo = creatininaAtual / creatininaBasal;
+                if (creatininaAtual >= 4.0 && aumentoAbsoluto >= 0.5) akinCreatinina = 3;
+                else if (aumentoRelativo >= 3.0) akinCreatinina = 3;
+                else if (aumentoRelativo >= 2.0) akinCreatinina = 2;
+                else if (aumentoRelativo >= 1.5 || aumentoAbsoluto >= 0.3) akinCreatinina = 1;
+                akinMemoryHtml += `<p><strong>Critério de Creatinina:</strong> Aumento de ${aumentoRelativo.toFixed(1)}x do basal → <strong>Estágio ${akinCreatinina}</strong>.</p>`;
+            } else {
+                 akinMemoryHtml += `<p><strong>Critério de Creatinina:</strong> Dados insuficientes.</p>`;
+            }
+
+            if (!isNaN(peso) && !isNaN(debitoUrinarioTotal) && !isNaN(periodoAfericao) && peso > 0 && periodoAfericao > 0) {
+                const debitoNormalizado = debitoUrinarioTotal / peso / periodoAfericao;
+                if (debitoNormalizado < 0.3 && periodoAfericao >= 24) akinDebito = 3;
+                else if (debitoUrinarioTotal === 0 && periodoAfericao >= 12) akinDebito = 3;
+                else if (debitoNormalizado < 0.5 && periodoAfericao >= 12) akinDebito = 2;
+                else if (debitoNormalizado < 0.5 && periodoAfericao >= 6) akinDebito = 1;
+                akinMemoryHtml += `<p><strong>Critério de Débito Urinário:</strong> ${debitoNormalizado.toFixed(2)} mL/kg/h em ${periodoAfericao}h → <strong>Estágio ${akinDebito}</strong>.</p>`;
+            } else {
+                akinMemoryHtml += `<p><strong>Critério de Débito Urinário:</strong> Dados insuficientes.</p>`;
+            }
+            
+            akinStage = Math.max(akinCreatinina, akinDebito);
+            akinMemoryHtml += `<p>O estágio final é o maior entre os critérios → <strong>Estágio ${akinStage}</strong>.</p>`;
+
+            // Display Results
+            const sofaResultEl = document.getElementById('sofa-result');
+            sofaResultEl.textContent = sofaScore;
             sofaResultEl.classList.remove('hidden');
             sofaResultEl.style.color = sofaScore > 8 ? 'var(--cor-alerta-alto)' : (sofaScore > 4 ? 'var(--cor-alerta-medio)' : 'var(--cor-verde-principal)');
             
-            const akinResultEl=document.getElementById('akin-result');
-            akinStage>0?akinResultEl.textContent=`Estágio ${akinStage}`:akinResultEl.textContent="Sem LRA";
+            const akinResultEl = document.getElementById('akin-result');
+            akinStage > 0 ? akinResultEl.textContent = `Estágio ${akinStage}` : akinResultEl.textContent = "Sem LRA";
             akinResultEl.classList.remove('hidden');
             akinResultEl.style.color = akinStage === 3 ? 'var(--cor-alerta-alto)' : (akinStage > 1 ? 'var(--cor-alerta-medio)' : 'var(--cor-verde-principal)');
+
+            // Update and show memory
+            document.getElementById('sofa-memory').innerHTML = sofaMemoryHtml;
+            document.getElementById('akin-memory').innerHTML = akinMemoryHtml;
+            document.getElementById('toggle-memory-btn').classList.remove('hidden');
         });
 
         document.getElementById('reset-btn').addEventListener('click', () => {
             const e=document.querySelectorAll('#calculator-inputs input, #calculator-inputs select');e.forEach(e=>{"checkbox"===e.type?e.checked=!1:"SELECT"===e.tagName?e.selectedIndex=0:e.value=""});
             document.getElementById('sofa-result').classList.add('hidden');
             document.getElementById('akin-result').classList.add('hidden');
+            document.getElementById('toggle-memory-btn').classList.add('hidden');
+            document.getElementById('calculation-memory').classList.add('hidden');
+            document.getElementById('toggle-memory-btn').textContent = 'Mostrar Memória de Cálculo';
+        });
+
+        document.getElementById('toggle-memory-btn').addEventListener('click', (e) => {
+            const memoryDiv = document.getElementById('calculation-memory');
+            const isHidden = memoryDiv.classList.toggle('hidden');
+            e.target.textContent = isHidden ? 'Mostrar Memória de Cálculo' : 'Ocultar Memória de Cálculo';
         });
     </script>
 </body>
