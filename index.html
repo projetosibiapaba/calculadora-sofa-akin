@@ -11,6 +11,9 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="images/icon-192x192.png">
 
+    <!-- PDF.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
     <style>
         /* --- Google Fonts (Inter) Embutido --- */
         @font-face {
@@ -108,6 +111,12 @@
         .w-auto{width:auto}
         .flex-col{flex-direction:column}
         .items-center{align-items:center}
+
+        /* AI Feature Styles */
+        #ai-section { border-top: 2px dashed var(--cor-verde-principal); padding-top: 1.5rem; margin-top: 2rem; }
+        #ai-status { margin-top: 1rem; font-style: italic; color: var(--cor-texto-secundario); }
+        .spinner { border: 4px solid rgba(0, 0, 0, 0.1); width: 24px; height: 24px; border-radius: 50%; border-left-color: var(--cor-verde-principal); animation: spin 1s ease infinite; margin: 0.5rem auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-slate-100">
@@ -118,6 +127,15 @@
             <h1 class="text-3xl font-bold">Calculadora de Scores Clínicos</h1>
             <p class="text-slate-600 mt-2">Insira os dados do paciente para calcular os scores SOFA e AKIN.</p>
         </header>
+
+        <!-- AI Feature Section -->
+        <div id="ai-section" class="card text-center">
+            <h2 class="mb-4">Preenchimento Automático com IA</h2>
+            <p class="text-slate-600 mb-4">Tire uma foto ou selecione a imagem/PDF de um exame para que a IA preencha os campos automaticamente.</p>
+            <button type="button" id="ai-btn" class="btn btn-primary" onclick="document.getElementById('file-input').click();">Ler Exame com IA</button>
+            <input type="file" id="file-input" accept="image/*,application/pdf" class="hidden">
+            <div id="ai-status"></div>
+        </div>
 
         <div id="calculator-inputs">
             <!-- SOFA Score Section -->
@@ -181,16 +199,135 @@
                     .catch(error => console.log('Falha ao registrar o Service Worker:', error));
             });
         }
+        
+        const aiStatus = document.getElementById('ai-status');
+        const fileInput = document.getElementById('file-input');
+
+        // Configure PDF.js worker
+        if (window.pdfjsLib) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js`;
+        }
+
+        // --- AI File Processing Logic ---
+        fileInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            aiStatus.innerHTML = '<div class="spinner"></div><p>Analisando ficheiro...</p>';
+            
+            if (file.type.startsWith('image/')) {
+                processImage(file);
+            } else if (file.type === 'application/pdf') {
+                processPdf(file);
+            } else {
+                aiStatus.textContent = 'Formato de ficheiro não suportado.';
+            }
+        });
+
+        function processImage(file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                const base64ImageData = reader.result.split(',')[1];
+                callGeminiApi(base64ImageData, file.type);
+            };
+        }
+
+        async function processPdf(file) {
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+            reader.onload = async () => {
+                try {
+                    const pdf = await pdfjsLib.getDocument(reader.result).promise;
+                    const page = await pdf.getPage(1); // Processa apenas a primeira página
+                    const viewport = page.getViewport({ scale: 2 });
+                    
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+                    
+                    const base64ImageData = canvas.toDataURL('image/jpeg').split(',')[1];
+                    callGeminiApi(base64ImageData, 'image/jpeg');
+
+                } catch (error) {
+                    console.error("Error processing PDF:", error);
+                    aiStatus.textContent = 'Erro ao processar o PDF.';
+                }
+            };
+        }
+
+        async function callGeminiApi(base64ImageData, mimeType) {
+            const prompt = "Analise a imagem deste resultado de exame. Extraia os seguintes parâmetros médicos e os seus valores numéricos: PaO2, FiO2, Plaquetas (em milhares, ex: se for 150.000, retorne 150), Bilirrubina, Pressão Arterial Média (PAM), Creatinina. Se um valor não for encontrado, retorne null para ele. Retorne os valores em formato JSON.";
+
+            const payload = {
+                contents: [ { role: "user", parts: [ { text: prompt }, { inlineData: { mimeType: mimeType, data: base64ImageData } } ] } ],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "pao2": { "type": "NUMBER", "nullable": true },
+                            "fio2": { "type": "NUMBER", "nullable": true },
+                            "plaquetas": { "type": "NUMBER", "nullable": true },
+                            "bilirrubina": { "type": "NUMBER", "nullable": true },
+                            "pam": { "type": "NUMBER", "nullable": true },
+                            "creatinina": { "type": "NUMBER", "nullable": true }
+                        }
+                    }
+                }
+            };
+            
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+                const result = await response.json();
+                if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts[0]) {
+                    const parsedJson = JSON.parse(result.candidates[0].content.parts[0].text);
+                    populateFields(parsedJson);
+                } else {
+                    aiStatus.textContent = 'Não foi possível extrair os dados do ficheiro.';
+                }
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                aiStatus.textContent = 'Erro ao analisar o ficheiro. Tente novamente.';
+            }
+        }
+
+        function populateFields(data) {
+            let fieldsPopulated = 0;
+            if (data.pao2) { document.getElementById('pao2').value = data.pao2; fieldsPopulated++; }
+            if (data.fio2) { document.getElementById('fio2').value = data.fio2; fieldsPopulated++; }
+            if (data.plaquetas) { document.getElementById('plaquetas').value = data.plaquetas; fieldsPopulated++; }
+            if (data.bilirrubina) { document.getElementById('bilirrubina').value = data.bilirrubina; fieldsPopulated++; }
+            if (data.pam) { document.getElementById('pam').value = data.pam; fieldsPopulated++; }
+            if (data.creatinina) {
+                document.getElementById('creatinina_sofa').value = data.creatinina;
+                document.getElementById('creatinina_atual').value = data.creatinina;
+                fieldsPopulated++;
+            }
+
+            if (fieldsPopulated > 0) {
+                aiStatus.innerHTML = `<p style="color: var(--cor-verde-principal);"><strong>${fieldsPopulated} parâmetro(s) preenchido(s) com sucesso!</strong></p>`;
+            } else {
+                aiStatus.textContent = 'Nenhum parâmetro reconhecido no ficheiro.';
+            }
+        }
 
         // --- Lógica da Calculadora ---
         document.getElementById('calculate-btn').addEventListener('click', () => {
             let sofaMemoryHtml = '<h3>Memória de Cálculo - SOFA</h3>';
             let akinMemoryHtml = '<h3>Memória de Cálculo - AKIN</h3>';
-
-            // SOFA Calculation
             let sofaScore = 0;
-            
-            // Respiratório
             const pao2 = parseFloat(document.getElementById('pao2').value);
             const fio2 = parseFloat(document.getElementById('fio2').value);
             const ventMec = document.getElementById('vent_mec').checked;
@@ -206,8 +343,6 @@
                 sofaMemoryHtml += `<p><strong>Respiratório:</strong> Dados insuficientes → <strong>0 pontos</strong>.</p>`;
             }
             sofaScore += respPoints;
-
-            // Coagulação
             const plaquetas = parseFloat(document.getElementById('plaquetas').value);
             let coagPoints = 0;
             if (!isNaN(plaquetas)) {
@@ -220,8 +355,6 @@
                 sofaMemoryHtml += `<p><strong>Coagulação:</strong> Dados insuficientes → <strong>0 pontos</strong>.</p>`;
             }
             sofaScore += coagPoints;
-
-            // Hepático
             const bilirrubina = parseFloat(document.getElementById('bilirrubina').value);
             let hepPoints = 0;
             if (!isNaN(bilirrubina)) {
@@ -234,8 +367,6 @@
                 sofaMemoryHtml += `<p><strong>Hepático:</strong> Dados insuficientes → <strong>0 pontos</strong>.</p>`;
             }
             sofaScore += hepPoints;
-
-            // Cardiovascular
             const pam = parseFloat(document.getElementById('pam').value);
             const vasopressores = parseInt(document.getElementById('vasopressores').value);
             let cardPoints = 0;
@@ -249,8 +380,6 @@
                 sofaMemoryHtml += `<p><strong>Cardiovascular:</strong> Dados insuficientes → <strong>0 pontos</strong>.</p>`;
             }
             sofaScore += cardPoints;
-
-            // Neurológico
             const glasgow = parseInt(document.getElementById('glasgow').value);
             let neuroPoints = 0;
             if (!isNaN(glasgow)) {
@@ -263,8 +392,6 @@
                 sofaMemoryHtml += `<p><strong>Neurológico:</strong> Dados insuficientes → <strong>0 pontos</strong>.</p>`;
             }
             sofaScore += neuroPoints;
-
-            // Renal
             const creatininaSofa = parseFloat(document.getElementById('creatinina_sofa').value);
             const debitoUrinario24h = parseFloat(document.getElementById('debito_urinario_24h').value);
             let renalPoints = 0;
@@ -280,8 +407,6 @@
             }
             sofaMemoryHtml += `<p><strong>Renal:</strong> Creatinina de ${creatininaSofa || 'N/A'} e Débito de ${debitoUrinario24h || 'N/A'} mL/24h → <strong>${renalPoints} ponto(s)</strong>.</p>`;
             sofaScore += renalPoints;
-
-            // AKIN Calculation
             let akinStage = 0;
             const peso = parseFloat(document.getElementById('peso').value);
             const creatininaBasal = parseFloat(document.getElementById('creatinina_basal').value);
@@ -290,7 +415,6 @@
             const periodoAfericao = parseFloat(document.getElementById('periodo_afericao').value);
             const trs = document.getElementById('trs').checked;
             let akinCreatinina = 0, akinDebito = 0;
-            
             if (trs) {
                 akinCreatinina = 3;
                 akinMemoryHtml += `<p><strong>Critério de Creatinina:</strong> Início de TRS → <strong>Estágio 3</strong>.</p>`;
@@ -305,7 +429,6 @@
             } else {
                  akinMemoryHtml += `<p><strong>Critério de Creatinina:</strong> Dados insuficientes.</p>`;
             }
-
             if (!isNaN(peso) && !isNaN(debitoUrinarioTotal) && !isNaN(periodoAfericao) && peso > 0 && periodoAfericao > 0) {
                 const debitoNormalizado = debitoUrinarioTotal / peso / periodoAfericao;
                 if (debitoNormalizado < 0.3 && periodoAfericao >= 24) akinDebito = 3;
@@ -316,25 +439,21 @@
             } else {
                 akinMemoryHtml += `<p><strong>Critério de Débito Urinário:</strong> Dados insuficientes.</p>`;
             }
-            
             akinStage = Math.max(akinCreatinina, akinDebito);
             akinMemoryHtml += `<p>O estágio final é o maior entre os critérios → <strong>Estágio ${akinStage}</strong>.</p>`;
-
-            // Display Results
             const sofaResultEl = document.getElementById('sofa-result');
             sofaResultEl.textContent = sofaScore;
             sofaResultEl.classList.remove('hidden');
             sofaResultEl.style.color = sofaScore > 8 ? 'var(--cor-alerta-alto)' : (sofaScore > 4 ? 'var(--cor-alerta-medio)' : 'var(--cor-verde-principal)');
-            
             const akinResultEl = document.getElementById('akin-result');
             akinStage > 0 ? akinResultEl.textContent = `Estágio ${akinStage}` : akinResultEl.textContent = "Sem LRA";
             akinResultEl.classList.remove('hidden');
             akinResultEl.style.color = akinStage === 3 ? 'var(--cor-alerta-alto)' : (akinStage > 1 ? 'var(--cor-alerta-medio)' : 'var(--cor-verde-principal)');
-
-            // Update and show memory
             document.getElementById('sofa-memory').innerHTML = sofaMemoryHtml;
             document.getElementById('akin-memory').innerHTML = akinMemoryHtml;
             document.getElementById('toggle-memory-btn').classList.remove('hidden');
+            document.getElementById('calculation-memory').classList.add('hidden');
+            document.getElementById('toggle-memory-btn').textContent = 'Mostrar Memória de Cálculo';
         });
 
         document.getElementById('reset-btn').addEventListener('click', () => {
@@ -344,6 +463,7 @@
             document.getElementById('toggle-memory-btn').classList.add('hidden');
             document.getElementById('calculation-memory').classList.add('hidden');
             document.getElementById('toggle-memory-btn').textContent = 'Mostrar Memória de Cálculo';
+            aiStatus.innerHTML = '';
         });
 
         document.getElementById('toggle-memory-btn').addEventListener('click', (e) => {
