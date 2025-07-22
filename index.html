@@ -11,8 +11,8 @@
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="./images/icon-192x192.png">
 
-    <!-- PDF.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <!-- A biblioteca PDF.js não é necessária na versão de produção sem IA -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script> -->
 
     <style>
         /* --- Google Fonts (Inter) Embutido --- */
@@ -111,13 +111,6 @@
         .w-auto{width:auto}
         .flex-col{flex-direction:column}
         .items-center{align-items:center}
-
-        /* AI Feature Styles */
-        #api-key-section { background-color: #fffbe6; border-color: #fde68a; }
-        #ai-section { border-top: 2px dashed var(--cor-verde-principal); padding-top: 1.5rem; margin-top: 2rem; }
-        #ai-status { margin-top: 1rem; font-style: italic; color: var(--cor-texto-secundario); }
-        .spinner { border: 4px solid rgba(0, 0, 0, 0.1); width: 24px; height: 24px; border-radius: 50%; border-left-color: var(--cor-verde-principal); animation: spin 1s ease infinite; margin: 0.5rem auto; }
-        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-slate-100">
@@ -129,7 +122,11 @@
             <p class="text-slate-600 mt-2">Insira os dados do paciente para calcular os scores SOFA e AKIN.</p>
         </header>
 
-        <!-- API Key Section -->
+        <!-- 
+        // =====================================================================
+        // INÍCIO DA SECÇÃO DE IA (COMENTADA PARA PRODUÇÃO)
+        // =====================================================================
+        
         <div id="api-key-section" class="card">
             <h2 class="mb-2">Configuração da Chave de API da IA</h2>
             <div class="input-group">
@@ -140,7 +137,6 @@
             </div>
         </div>
 
-        <!-- AI Feature Section -->
         <div id="ai-section" class="card text-center">
             <h2 class="mb-4">Preenchimento Automático com IA</h2>
             <p class="text-slate-600 mb-4">Tire uma foto ou selecione a imagem/PDF de um exame para que a IA preencha os campos automaticamente.</p>
@@ -148,6 +144,11 @@
             <input type="file" id="file-input" accept="image/*,application/pdf" class="hidden">
             <div id="ai-status"></div>
         </div>
+        
+        // =====================================================================
+        // FIM DA SECÇÃO DE IA (COMENTADA PARA PRODUÇÃO)
+        // =====================================================================
+        -->
 
         <div id="calculator-inputs">
             <!-- SOFA Score Section -->
@@ -212,6 +213,10 @@
             });
         }
         
+        // =====================================================================
+        // INÍCIO DO CÓDIGO DA IA (COMENTADO PARA PRODUÇÃO)
+        // =====================================================================
+        /*
         const aiStatus = document.getElementById('ai-status');
         const fileInput = document.getElementById('file-input');
         const apiKeyInput = document.getElementById('api-key-input');
@@ -370,6 +375,10 @@
                 aiStatus.textContent = 'Nenhum parâmetro reconhecido no ficheiro.';
             }
         }
+        */
+        // =====================================================================
+        // FIM DO CÓDIGO DA IA (COMENTADO PARA PRODUÇÃO)
+        // =====================================================================
 
         // --- Lógica da Calculadora ---
         document.getElementById('calculate-btn').addEventListener('click', () => {
@@ -511,7 +520,7 @@
             document.getElementById('toggle-memory-btn').classList.add('hidden');
             document.getElementById('calculation-memory').classList.add('hidden');
             document.getElementById('toggle-memory-btn').textContent = 'Mostrar Memória de Cálculo';
-            aiStatus.innerHTML = '';
+            // if (aiStatus) aiStatus.innerHTML = ''; // Comentado para produção
         });
 
         document.getElementById('toggle-memory-btn').addEventListener('click', (e) => {
