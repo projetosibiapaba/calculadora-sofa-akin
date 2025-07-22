@@ -8,8 +8,8 @@
     <title>Calculadora SOFA & AKIN</title>
     <meta name="theme-color" content="#8dc63f"/>
     <!-- Link para o ficheiro manifest.json externo -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="images/icon-192x192.png">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="./images/icon-192x192.png">
 
     <!-- PDF.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -76,8 +76,8 @@
         
         .input-group{margin-bottom:1rem}
         .input-group label{display:block;font-weight:500;color:var(--cor-texto-principal);margin-bottom:.5rem}
-        .input-group input[type=number],.input-group select{width:100%;padding:.5rem .75rem;border:1px solid var(--cor-borda);border-radius:.375rem;transition:border-color .2s,box-shadow .2s}
-        .input-group input[type=number]:focus,.input-group select:focus{outline:none;border-color:var(--cor-verde-principal);box-shadow:0 0 0 2px var(--cor-verde-principal)40}
+        .input-group input[type=number], .input-group input[type=text], .input-group select{width:100%;padding:.5rem .75rem;border:1px solid var(--cor-borda);border-radius:.375rem;transition:border-color .2s,box-shadow .2s}
+        .input-group input[type=number]:focus, .input-group input[type=text]:focus, .input-group select:focus{outline:none;border-color:var(--cor-verde-principal);box-shadow:0 0 0 2px var(--cor-verde-principal)40}
         .checkbox-group{display:flex;align-items:center;margin-top:.5rem}
         .checkbox-group input{margin-right:.5rem;height:1rem;width:1rem;accent-color: var(--cor-verde-principal);}
         
@@ -113,6 +113,7 @@
         .items-center{align-items:center}
 
         /* AI Feature Styles */
+        #api-key-section { background-color: #fffbe6; border-color: #fde68a; }
         #ai-section { border-top: 2px dashed var(--cor-verde-principal); padding-top: 1.5rem; margin-top: 2rem; }
         #ai-status { margin-top: 1rem; font-style: italic; color: var(--cor-texto-secundario); }
         .spinner { border: 4px solid rgba(0, 0, 0, 0.1); width: 24px; height: 24px; border-radius: 50%; border-left-color: var(--cor-verde-principal); animation: spin 1s ease infinite; margin: 0.5rem auto; }
@@ -127,6 +128,17 @@
             <h1 class="text-3xl font-bold">Calculadora de Scores Clínicos</h1>
             <p class="text-slate-600 mt-2">Insira os dados do paciente para calcular os scores SOFA e AKIN.</p>
         </header>
+
+        <!-- API Key Section -->
+        <div id="api-key-section" class="card">
+            <h2 class="mb-2">Configuração da Chave de API da IA</h2>
+            <div class="input-group">
+                <label for="api-key-input">Para usar a função de IA, insira a sua Chave de API do Google AI Studio:</label>
+                <input type="text" id="api-key-input" placeholder="Cole a sua chave de API aqui" class="mb-2">
+                <button type="button" id="save-key-btn" class="btn btn-primary w-full">Salvar Chave</button>
+                <p class="text-xs text-slate-600 mt-2">A chave é guardada apenas no seu navegador. <a href="https://aistudio.google.com/app/apikey" target="_blank" style="text-decoration: underline;">Obtenha uma chave gratuita aqui.</a></p>
+            </div>
+        </div>
 
         <!-- AI Feature Section -->
         <div id="ai-section" class="card text-center">
@@ -202,6 +214,27 @@
         
         const aiStatus = document.getElementById('ai-status');
         const fileInput = document.getElementById('file-input');
+        const apiKeyInput = document.getElementById('api-key-input');
+        const saveKeyBtn = document.getElementById('save-key-btn');
+
+        // Load saved API key on startup
+        window.addEventListener('load', () => {
+            const savedKey = localStorage.getItem('geminiApiKey');
+            if (savedKey) {
+                apiKeyInput.value = savedKey;
+            }
+        });
+
+        // Save API key
+        saveKeyBtn.addEventListener('click', () => {
+            const key = apiKeyInput.value.trim();
+            if (key) {
+                localStorage.setItem('geminiApiKey', key);
+                alert('Chave de API guardada com sucesso!');
+            } else {
+                alert('Por favor, insira uma chave de API válida.');
+            }
+        });
 
         // Configure PDF.js worker
         if (window.pdfjsLib) {
@@ -212,6 +245,12 @@
         fileInput.addEventListener('change', async (event) => {
             const file = event.target.files[0];
             if (!file) return;
+
+            const apiKey = localStorage.getItem('geminiApiKey');
+            if (!apiKey) {
+                aiStatus.textContent = 'Por favor, guarde uma Chave de API do Google AI para usar esta funcionalidade.';
+                return;
+            }
 
             aiStatus.innerHTML = '<div class="spinner"></div><p>Analisando ficheiro...</p>';
             
@@ -260,6 +299,12 @@
         }
 
         async function callGeminiApi(base64ImageData, mimeType) {
+            const apiKey = localStorage.getItem('geminiApiKey');
+            if (!apiKey) {
+                aiStatus.textContent = 'Chave de API não encontrada.';
+                return;
+            }
+
             const prompt = "Analise a imagem deste resultado de exame. Extraia os seguintes parâmetros médicos e os seus valores numéricos: PaO2, FiO2, Plaquetas (em milhares, ex: se for 150.000, retorne 150), Bilirrubina, Pressão Arterial Média (PAM), Creatinina. Se um valor não for encontrado, retorne null para ele. Retorne os valores em formato JSON.";
 
             const payload = {
@@ -280,7 +325,6 @@
                 }
             };
             
-            const apiKey = "";
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             try {
@@ -290,7 +334,6 @@
                     body: JSON.stringify(payload)
                 });
                 if (!response.ok) {
-                    // Log da resposta de erro completa para depuração
                     const errorBody = await response.text();
                     console.error('API Error Response:', errorBody);
                     throw new Error(`API Error: ${response.status} ${response.statusText}`);
@@ -303,7 +346,6 @@
                     aiStatus.textContent = 'Não foi possível extrair os dados do ficheiro.';
                 }
             } catch (error) {
-                // Log do erro completo para depuração
                 console.error("Detalhes do erro da API Gemini:", error);
                 aiStatus.textContent = 'Erro ao analisar o ficheiro. Verifique a consola para mais detalhes.';
             }
